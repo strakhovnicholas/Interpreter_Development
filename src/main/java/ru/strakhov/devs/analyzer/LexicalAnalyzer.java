@@ -1,22 +1,26 @@
 package ru.strakhov.devs.analyzer;
 
+import ru.strakhov.devs.lexical_object.type.IdentifierType;
 import ru.strakhov.devs.validator.TokenValidator;
 import ru.strakhov.devs.lexical_object.entity.LexcialObject;
 import ru.strakhov.devs.factory.LexicalObjectsFactory;
 import ru.strakhov.devs.manager.IOFileManager;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LexicalAnalyzer {
     private static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/', '(', ')');
 
     public void start(String inputFileName, String tokensFile, String symbolsFile) throws IOException {
         String fileExpression = IOFileManager.readFile(inputFileName);
-        this.getTokens(fileExpression);
-
+        List<LexcialObject> tokens = this.getTokens(fileExpression);
+        this.createTokensFile(tokensFile, tokens);
+        this.createSymbolsFile(symbolsFile, tokens);
     }
 
     public List<LexcialObject> getTokens(String line) {
@@ -36,9 +40,6 @@ public class LexicalAnalyzer {
         }
 
         this.processToken(line, index, 0, tokens);
-        for (LexcialObject token : tokens) {
-            System.out.println(token);
-        }
         return tokens;
     }
 
@@ -51,9 +52,9 @@ public class LexicalAnalyzer {
 
     private String extractSubstring(String line, int index, int i) {
         String valueBetweenOperators = "";
-        if (i != 0){
+        if (i != 0) {
             valueBetweenOperators = line.substring(index, i);
-        } else{
+        } else {
             valueBetweenOperators = line.substring(index);
         }
         return valueBetweenOperators;
@@ -67,6 +68,30 @@ public class LexicalAnalyzer {
 
     private void validateExtractedString(String extractedString, int inlinePosition) {
         TokenValidator.validateString(extractedString, inlinePosition);
+    }
+
+
+    private void createSymbolsFile(String symbolsFile, List<LexcialObject> tokens) {
+        List<LexcialObject> list = tokens
+                .stream()
+                .filter(token -> token.getType() instanceof IdentifierType)
+                .toList();
+        StringBuilder builder = getReadyStringBuilder(list);
+        IOFileManager.createFile(symbolsFile, builder.toString());
+    }
+
+    private void createTokensFile(String tokensFile, List<LexcialObject> tokens) {
+        StringBuilder builder = getReadyStringBuilder(tokens);
+        IOFileManager.createFile(tokensFile, builder.toString());
+    }
+
+    private StringBuilder getReadyStringBuilder(List<LexcialObject> list) {
+        StringBuilder builder = new StringBuilder();
+        list.forEach(elem -> {
+            builder.append(elem);
+            builder.append("\n");
+        });
+        return builder;
     }
 
 }

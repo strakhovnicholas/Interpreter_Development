@@ -10,4 +10,9 @@ public class LexcialObject {
     private String value;
     private int inLinePosition;
     private LexicalObjectType type;
+
+    @Override
+    public String toString() {
+        return String.format("<%s> - %s", this.value, this.type);
+    }
 }
