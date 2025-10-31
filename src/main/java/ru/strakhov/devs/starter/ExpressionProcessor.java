@@ -29,7 +29,7 @@ public class ExpressionProcessor {
         }
     }
 
-    private void createSyntaxTreeFile( List<LexcialObject> tokens) throws IOException {
+    private void createSyntaxTreeFile(List<LexcialObject> tokens) throws IOException {
         SyntaxParser parser = new SyntaxParser(tokens);
         SyntaxTreeNode tree = parser.parseExpression();
         parser.checkEnd();
