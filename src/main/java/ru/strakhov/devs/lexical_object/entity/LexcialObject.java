@@ -11,6 +11,18 @@ public class LexcialObject {
     private int inLinePosition;
     private LexicalObjectType type;
 
+    public String getValue() {
+        return value;
+    }
+
+    public int getInLinePosition() {
+        return inLinePosition;
+    }
+
+    public LexicalObjectType getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
         return String.format("<%s> - %s", this.value, this.type);
