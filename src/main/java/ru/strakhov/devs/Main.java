@@ -38,7 +38,7 @@ public class Main {
             expressionProcessor.setCurrentMode("gen2");
             expressionProcessor.start(inputFile, tokensFile, symbolsFile);
         } else {
-            System.err.println("Invalid mode. Use LEX, SYN, SEM, GEN1, or GEN2.");
+            System.err.println("Invalid mode. Use LEX, SYN, SEM, GEN1, or GEN2:)");
             System.exit(1);
         }
     }
