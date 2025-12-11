@@ -10,6 +10,8 @@ public class LexcialObject {
     private String value;
     private int inLinePosition;
     private LexicalObjectType type;
+    private VariableType variableType; // Тип переменной (только для идентификаторов)
+    private Integer identifierId; // ID идентификатора в таблице символов
 
     public String getValue() {
         return value;

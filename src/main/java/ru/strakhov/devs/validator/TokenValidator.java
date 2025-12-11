@@ -14,6 +14,36 @@ public class TokenValidator {
     private static final Set<Character> OPERATORS = Set.of('+', '-', '*', '/', '(', ')');
 
     public static void validateString(String input, int inLinePosition) {
+        // Проверяем, является ли это идентификатором с типом в квадратных скобках
+        if (input.matches("[A-Za-z_][A-Za-z0-9_]*\\[[fFiI]\\]")) {
+            // Валидация для идентификатора с типом
+            int bracketIndex = input.indexOf('[');
+            String varName = input.substring(0, bracketIndex);
+            String typePart = input.substring(bracketIndex);
+            
+            // Проверяем имя переменной
+            for (int i = 0; i < varName.length(); i++) {
+                char c = varName.charAt(i);
+                if (!isValidSymbol(c)) {
+                    throw new IllegalSymbolException(
+                            String.format("Недопустимый символ «%s» на позиции %d", c, inLinePosition + i)
+                    );
+                }
+            }
+            
+            // Проверяем часть с типом [f], [F], [i], или [I]
+            if (!typePart.matches("\\[[fFiI]\\]")) {
+                throw new IllegalSymbolException(
+                        String.format("Неправильный формат типа переменной «%s» на позиции %d. Используйте [f], [F], [i] или [I]", 
+                                typePart, inLinePosition + bracketIndex)
+                );
+            }
+            
+            TokenValidator.validateFullString(varName, inLinePosition);
+            return;
+        }
+        
+        // Обычная валидация
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
 
@@ -51,7 +81,8 @@ public class TokenValidator {
 
     private static boolean isValidSymbol(char c) {
         return OPERATORS.contains(c) ||
-                ALLOWED_SYMBOL_PATTERN.matcher(String.valueOf(c)).matches();
+                ALLOWED_SYMBOL_PATTERN.matcher(String.valueOf(c)).matches() ||
+                c == '[' || c == ']'; // Разрешаем квадратные скобки для типов переменных
     }
 
 }

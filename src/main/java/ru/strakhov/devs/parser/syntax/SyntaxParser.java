@@ -4,6 +4,7 @@ import ru.strakhov.devs.exception.SyntaxException;
 import ru.strakhov.devs.lexical_object.entity.LexcialObject;
 
 import java.util.List;
+import java.util.Objects;
 
 public class SyntaxParser {
     private final List<LexcialObject> tokens;
@@ -16,7 +17,7 @@ public class SyntaxParser {
     public SyntaxTreeNode parseExpression() {
         SyntaxTreeNode left = parseTerm();
         while (currentTokenIs("PlusType", "MinusType")) {
-            String op = currentToken().getValue();
+            String op = Objects.requireNonNull(currentToken()).getValue();
             advance();
             SyntaxTreeNode right = parseTerm();
             SyntaxTreeNode node = new SyntaxTreeNode(op, currentToken());
@@ -30,7 +31,7 @@ public class SyntaxParser {
     public SyntaxTreeNode parseTerm() {
         SyntaxTreeNode left = parseFactor();
         while (currentTokenIs("MultiplyType", "DivideType")) {
-            String op = currentToken().getValue();
+            String op = Objects.requireNonNull(currentToken()).getValue();
             advance();
             SyntaxTreeNode right = parseFactor();
             SyntaxTreeNode node = new SyntaxTreeNode(op, currentToken());
@@ -64,6 +65,7 @@ public class SyntaxParser {
 
         if (currentTokenIs("IdentifierType", "NumberType")) {
             advance();
+            assert current != null;
             return new SyntaxTreeNode(current.getValue(), current);
         }
 
